@@ -843,3 +843,31 @@ main {
   font-size: 0.9rem;
   font-weight: 600;
 }
+
+
+
+
+
+.call-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  margin-top: 28px;
+  padding: 13px 22px;
+
+  color: #080b14;
+  background: #00c3ff;
+
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+
+  transition: all 0.3s ease;
+}
+
+.call-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 195, 255, 0.3);
+}
