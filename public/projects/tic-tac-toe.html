@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Tic-Tac-Toe Game</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #071a2d, #0b2d42);
+      color: white;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 500px;
+
+      text-align: center;
+
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+
+      border-radius: 24px;
+      padding: 35px 25px;
+
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #9fb3c8;
+      margin-bottom: 25px;
+      font-size: 0.95rem;
+    }
+
+    .turn {
+      display: inline-block;
+
+      padding: 10px 20px;
+      margin-bottom: 25px;
+
+      background: rgba(0, 195, 255, 0.1);
+      border: 1px solid rgba(0, 195, 255, 0.25);
+
+      border-radius: 20px;
+
+      color: #00c3ff;
+      font-weight: bold;
+    }
+
+    .game {
+      width: min(100%, 360px);
+
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 10px;
+
+      margin: 0 auto 25px;
+    }
+
+    .box {
+      aspect-ratio: 1;
+
+      border: none;
+      border-radius: 16px;
+
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+
+      font-size: clamp(2rem, 8vw, 4rem);
+      font-weight: bold;
+
+      cursor: pointer;
+
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .box:hover:not(:disabled) {
+      transform: scale(1.04);
+      background: rgba(0, 195, 255, 0.15);
+    }
+
+    .box:disabled {
+      cursor: default;
+    }
+
+    .box.x {
+      color: #00c3ff;
+    }
+
+    .box.o {
+      color: #4ade80;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    .control-btn {
+      padding: 12px 20px;
+
+      border-radius: 10px;
+      border: 1px solid rgba(0, 195, 255, 0.35);
+
+      background: rgba(0, 195, 255, 0.1);
+      color: white;
+
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: bold;
+
+      transition: 0.25s ease;
+    }
+
+    .control-btn:hover {
+      transform: translateY(-2px);
+      background: #00c3ff;
+      color: #071a2d;
+    }
+
+    .message {
+      margin-bottom: 20px;
+
+      min-height: 24px;
+
+      color: #4ade80;
+      font-weight: bold;
+      font-size: 1.05rem;
+    }
+
+    @media (max-width: 480px) {
+      .app {
+        padding: 25px 15px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .control-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <h1>🎮 Tic-Tac-Toe</h1>
+
+    <p class="subtitle">
+      Play a classic two-player game
+    </p>
+
+    <div class="turn" id="turn">
+      Player X's Turn
+    </div>
+
+    <p class="message" id="message"></p>
+
+    <div class="game">
+      <button class="box"></button>
+      <button class="box"></button>
+      <button class="box"></button>
+
+      <button class="box"></button>
+      <button class="box"></button>
+      <button class="box"></button>
+
+      <button class="box"></button>
+      <button class="box"></button>
+      <button class="box"></button>
+    </div>
+
+    <div class="controls">
+      <button class="control-btn" id="reset-btn">
+        ↻ Reset Game
+      </button>
+
+      <button class="control-btn" id="new-btn">
+        + New Game
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    const boxes = document.querySelectorAll(".box");
+    const resetBtn = document.querySelector("#reset-btn");
+    const newGameBtn = document.querySelector("#new-btn");
+    const message = document.querySelector("#message");
+    const turnDisplay = document.querySelector("#turn");
+
+    let currentPlayer = "X";
+    let gameActive = true;
+    let moveCount = 0;
+
+    const winPatterns = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    boxes.forEach((box) => {
+      box.addEventListener("click", () => {
+
+        if (!gameActive || box.textContent !== "") {
+          return;
+        }
+
+        box.textContent = currentPlayer;
+
+        if (currentPlayer === "X") {
+          box.classList.add("x");
+        } else {
+          box.classList.add("o");
+        }
+
+        moveCount++;
+
+        if (checkWinner()) {
+          message.textContent =
+            `🎉 Player ${currentPlayer} Wins!`;
+
+          turnDisplay.textContent = "Game Over";
+          gameActive = false;
+
+          disableBoxes();
+          return;
+        }
+
+        if (moveCount === 9) {
+          message.textContent = "🤝 It's a Draw!";
+          turnDisplay.textContent = "Game Over";
+          gameActive = false;
+
+          return;
+        }
+
+        currentPlayer =
+          currentPlayer === "X" ? "O" : "X";
+
+        turnDisplay.textContent =
+          `Player ${currentPlayer}'s Turn`;
+      });
+    });
+
+    function checkWinner() {
+      return winPatterns.some((pattern) => {
+
+        const [a, b, c] = pattern;
+
+        return (
+          boxes[a].textContent !== "" &&
+          boxes[a].textContent === boxes[b].textContent &&
+          boxes[b].textContent === boxes[c].textContent
+        );
+      });
+    }
+
+    function disableBoxes() {
+      boxes.forEach((box) => {
+        box.disabled = true;
+      });
+    }
+
+    function resetGame() {
+      currentPlayer = "X";
+      gameActive = true;
+      moveCount = 0;
+
+      message.textContent = "";
+      turnDisplay.textContent = "Player X's Turn";
+
+      boxes.forEach((box) => {
+        box.textContent = "";
+        box.disabled = false;
+
+        box.classList.remove("x", "o");
+      });
+    }
+
+    resetBtn.addEventListener("click", resetGame);
+    newGameBtn.addEventListener("click", resetGame);
+  </script>
+
+</body>
+</html>

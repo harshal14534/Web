@@ -1,38 +1,62 @@
 const projects = [
   {
+    id: 1,
     title: "Tic-Tac-Toe Game",
+    icon: "🎮",
     description:
-      "A simple two-player Tic-Tac-Toe game built with HTML, CSS, and JavaScript.",
+      "A two-player Tic-Tac-Toe game with winner detection, draw detection, reset, and new game functionality.",
     technologies: ["HTML", "CSS", "JavaScript"],
-    image: "🎮",
-    demo: "#",
+    features: [
+      "Two-player gameplay",
+      "Winner & draw detection",
+      "Reset and new game",
+    ],
+    demo: "/projects/tic-tac-toe.html",
     github: "#",
   },
   {
+    id: 2,
     title: "Password Strength Checker",
+    icon: "🔐",
     description:
-      "A web application that checks password strength and helps users create stronger passwords.",
+      "A password checker that analyzes password strength based on multiple security requirements.",
     technologies: ["HTML", "CSS", "JavaScript"],
-    image: "🔐",
-    demo: "#",
+    features: [
+      "Real-time password checking",
+      "Weak, medium & strong feedback",
+      "Password requirement indicators",
+    ],
+    demo: "/projects/password-checker.html",
     github: "#",
   },
   {
-    title: "To-Do List",
+    id: 3,
+    title: "Responsive To-Do App",
+    icon: "📝",
     description:
-      "A simple and responsive task management application for adding and organizing daily tasks.",
-    technologies: ["HTML", "CSS", "JavaScript"],
-    image: "📝",
-    demo: "#",
+      "A responsive task management application for adding, completing, restoring, and deleting tasks.",
+    technologies: ["HTML", "CSS", "JavaScript", "LocalStorage"],
+    features: [
+      "Add and delete tasks",
+      "Pending & completed sections",
+      "LocalStorage support",
+    ],
+    demo: "/projects/todo-app.html",
     github: "#",
   },
   {
+    id: 4,
     title: "Calculator",
+    icon: "🧮",
     description:
-      "A simple calculator application that performs basic mathematical operations.",
+      "A responsive calculator supporting basic arithmetic operations, decimals, clear, backspace, and error handling.",
     technologies: ["HTML", "CSS", "JavaScript"],
-    image: "🧮",
-    demo: "#",
+    features: [
+      "Basic arithmetic operations",
+      "Decimal number support",
+      "Clear & backspace controls",
+    ],
+    demo: "/projects/calculator.html",
     github: "#",
   },
 ];

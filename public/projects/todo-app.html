@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Responsive To-Do App</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #071a2d, #0b2d42);
+      color: white;
+      padding: 30px 20px;
+    }
+
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+
+    .header {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    /* MAIN GRID */
+
+    .todo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* COLUMN */
+
+    .column {
+      min-height: 400px;
+      padding: 20px;
+
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .column-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      margin-bottom: 20px;
+
+      font-size: 1.1rem;
+    }
+
+    /* ADD TASK */
+
+    textarea {
+      width: 100%;
+      min-height: 130px;
+
+      padding: 14px;
+
+      resize: vertical;
+
+      color: white;
+      background: rgba(255, 255, 255, 0.06);
+
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+
+      outline: none;
+
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    textarea:focus {
+      border-color: #00c3ff;
+      box-shadow: 0 0 0 3px rgba(0, 195, 255, 0.08);
+    }
+
+    .add-btn {
+      width: 100%;
+
+      margin-top: 12px;
+      padding: 13px;
+
+      border: none;
+      border-radius: 10px;
+
+      background: #00c3ff;
+      color: #071a2d;
+
+      font-size: 0.95rem;
+      font-weight: bold;
+
+      cursor: pointer;
+
+      transition: all 0.25s ease;
+    }
+
+    .add-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(0, 195, 255, 0.25);
+    }
+
+    /* TASK */
+
+    .task {
+      padding: 14px;
+      margin-bottom: 12px;
+
+      background: rgba(255, 255, 255, 0.05);
+
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+
+      animation: appear 0.3s ease;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .task-text {
+      color: #e2e8f0;
+
+      line-height: 1.5;
+      word-break: break-word;
+
+      margin-bottom: 12px;
+    }
+
+    .completed .task-text {
+      color: #64748b;
+      text-decoration: line-through;
+    }
+
+    /* ACTION BUTTONS */
+
+    .task-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .task-actions button {
+      flex: 1;
+
+      padding: 8px;
+
+      border: none;
+      border-radius: 7px;
+
+      color: white;
+
+      font-size: 0.75rem;
+      font-weight: bold;
+
+      cursor: pointer;
+
+      transition: transform 0.2s ease;
+    }
+
+    .task-actions button:hover {
+      transform: translateY(-2px);
+    }
+
+    .complete-btn {
+      background: #0284c7;
+    }
+
+    .uncheck-btn {
+      background: #a16207;
+    }
+
+    .delete-btn {
+      background: #dc2626;
+    }
+
+    /* EMPTY MESSAGE */
+
+    .empty-message {
+      color: #64748b;
+      text-align: center;
+      padding: 35px 10px;
+
+      font-size: 0.85rem;
+    }
+
+    /* TASK COUNTER */
+
+    .task-count {
+      margin-left: auto;
+
+      padding: 4px 9px;
+
+      color: #00c3ff;
+      background: rgba(0, 195, 255, 0.08);
+
+      border-radius: 20px;
+
+      font-size: 0.75rem;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 900px) {
+      .todo-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .column {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 20px 12px;
+      }
+
+      .header h1 {
+        font-size: 1.6rem;
+      }
+
+      .column {
+        padding: 16px;
+      }
+
+      .task-actions {
+        flex-wrap: wrap;
+      }
+
+      .task-actions button {
+        min-width: 45%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- HEADER -->
+
+    <header class="header">
+      <h1>📝 My To-Do App</h1>
+
+      <p>
+        Organize your tasks and keep track of your progress.
+      </p>
+    </header>
+
+    <!-- TODO GRID -->
+
+    <main class="todo-grid">
+
+      <!-- ADD TASK -->
+
+      <section class="column">
+
+        <h2 class="column-title">
+          ➕ Add Task
+        </h2>
+
+        <form id="taskForm">
+
+          <textarea
+            id="newTask"
+            placeholder="What do you need to do?"
+            required
+          ></textarea>
+
+          <button type="submit" class="add-btn">
+            + Add Task
+          </button>
+
+        </form>
+
+      </section>
+
+      <!-- PENDING -->
+
+      <section class="column">
+
+        <h2 class="column-title">
+          ⏳ Pending
+
+          <span class="task-count" id="pendingCount">
+            0
+          </span>
+        </h2>
+
+        <div id="pendingTasks"></div>
+
+      </section>
+
+      <!-- COMPLETED -->
+
+      <section class="column">
+
+        <h2 class="column-title">
+          ✅ Completed
+
+          <span class="task-count" id="completedCount">
+            0
+          </span>
+        </h2>
+
+        <div id="completedTasks"></div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <script>
+    const taskForm = document.getElementById("taskForm");
+    const newTaskInput = document.getElementById("newTask");
+
+    const pendingTasksContainer =
+      document.getElementById("pendingTasks");
+
+    const completedTasksContainer =
+      document.getElementById("completedTasks");
+
+    const pendingCount =
+      document.getElementById("pendingCount");
+
+    const completedCount =
+      document.getElementById("completedCount");
+
+
+    let tasks =
+      JSON.parse(localStorage.getItem("todoTasks")) || [];
+
+
+    /* ADD TASK */
+
+    taskForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const taskText = newTaskInput.value.trim();
+
+      if (taskText === "") {
+        return;
+      }
+
+      tasks.push({
+        id: Date.now(),
+        text: taskText,
+        completed: false,
+      });
+
+      newTaskInput.value = "";
+
+      saveTasks();
+      renderTasks();
+    });
+
+
+    /* RENDER TASKS */
+
+    function renderTasks() {
+      pendingTasksContainer.innerHTML = "";
+      completedTasksContainer.innerHTML = "";
+
+      const pendingTasks =
+        tasks.filter((task) => !task.completed);
+
+      const completedTasks =
+        tasks.filter((task) => task.completed);
+
+
+      pendingCount.textContent =
+        pendingTasks.length;
+
+      completedCount.textContent =
+        completedTasks.length;
+
+
+      if (pendingTasks.length === 0) {
+        pendingTasksContainer.innerHTML =
+          `<p class="empty-message">
+            No pending tasks 🎉
+          </p>`;
+      }
+
+
+      if (completedTasks.length === 0) {
+        completedTasksContainer.innerHTML =
+          `<p class="empty-message">
+            No completed tasks yet.
+          </p>`;
+      }
+
+
+      tasks.forEach((task) => {
+        const taskElement =
+          createTaskElement(task);
+
+        if (task.completed) {
+          completedTasksContainer.appendChild(
+            taskElement
+          );
+        } else {
+          pendingTasksContainer.appendChild(
+            taskElement
+          );
+        }
+      });
+    }
+
+
+    /* CREATE TASK */
+
+    function createTaskElement(task) {
+      const taskDiv =
+        document.createElement("div");
+
+      taskDiv.className =
+        `task ${task.completed ? "completed" : ""}`;
+
+
+      const taskText =
+        document.createElement("p");
+
+      taskText.className = "task-text";
+      taskText.textContent = task.text;
+
+
+      const actions =
+        document.createElement("div");
+
+      actions.className = "task-actions";
+
+
+      const toggleButton =
+        document.createElement("button");
+
+      toggleButton.textContent =
+        task.completed ? "↩ Undo" : "✓ Complete";
+
+      toggleButton.className =
+        task.completed
+          ? "uncheck-btn"
+          : "complete-btn";
+
+      toggleButton.addEventListener("click", () => {
+        toggleTask(task.id);
+      });
+
+
+      const deleteButton =
+        document.createElement("button");
+
+      deleteButton.textContent = "🗑 Delete";
+      deleteButton.className = "delete-btn";
+
+      deleteButton.addEventListener("click", () => {
+        deleteTask(task.id);
+      });
+
+
+      actions.appendChild(toggleButton);
+      actions.appendChild(deleteButton);
+
+      taskDiv.appendChild(taskText);
+      taskDiv.appendChild(actions);
+
+      return taskDiv;
+    }
+
+
+    /* TOGGLE TASK */
+
+    function toggleTask(id) {
+      tasks = tasks.map((task) => {
+        if (task.id === id) {
+          return {
+            ...task,
+            completed: !task.completed,
+          };
+        }
+
+        return task;
+      });
+
+      saveTasks();
+      renderTasks();
+    }
+
+
+    /* DELETE TASK */
+
+    function deleteTask(id) {
+      tasks =
+        tasks.filter((task) => task.id !== id);
+
+      saveTasks();
+      renderTasks();
+    }
+
+
+    /* SAVE */
+
+    function saveTasks() {
+      localStorage.setItem(
+        "todoTasks",
+        JSON.stringify(tasks)
+      );
+    }
+
+
+    /* INITIAL RENDER */
+
+    renderTasks();
+  </script>
+
+</body>
+</html>

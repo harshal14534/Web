@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Calculator</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+
+      font-family: Arial, sans-serif;
+
+      background: linear-gradient(135deg, #071a2d, #0b2d42);
+      color: white;
+    }
+
+    .calculator {
+      width: 100%;
+      max-width: 380px;
+
+      padding: 22px;
+
+      background: rgba(255, 255, 255, 0.06);
+
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .calculator-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      margin-bottom: 20px;
+    }
+
+    .calculator-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .calculator-header span {
+      padding: 6px 10px;
+
+      color: #00c3ff;
+      background: rgba(0, 195, 255, 0.08);
+
+      border: 1px solid rgba(0, 195, 255, 0.15);
+      border-radius: 8px;
+
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+
+    /* DISPLAY */
+
+    .display {
+      width: 100%;
+      min-height: 120px;
+
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+
+      margin-bottom: 18px;
+      padding: 20px;
+
+      overflow-x: auto;
+
+      background: rgba(0, 0, 0, 0.35);
+
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+
+      color: #ffffff;
+
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 500;
+
+      word-break: break-all;
+    }
+
+    /* KEYPAD */
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+
+      gap: 10px;
+    }
+
+    button {
+      height: 62px;
+
+      border: none;
+      border-radius: 14px;
+
+      font-size: 1.2rem;
+      font-weight: 600;
+
+      color: white;
+
+      background: rgba(255, 255, 255, 0.08);
+
+      cursor: pointer;
+
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    button:active {
+      transform: scale(0.96);
+    }
+
+    /* OPERATOR BUTTONS */
+
+    .operator {
+      color: #00c3ff;
+
+      background: rgba(0, 195, 255, 0.1);
+    }
+
+    .operator:hover {
+      background: rgba(0, 195, 255, 0.2);
+    }
+
+    /* CLEAR BUTTON */
+
+    .clear {
+      color: #ff8a8a;
+
+      background: rgba(248, 113, 113, 0.1);
+    }
+
+    .clear:hover {
+      background: rgba(248, 113, 113, 0.2);
+    }
+
+    /* EQUAL BUTTON */
+
+    .equal {
+      background: #00c3ff;
+      color: #071a2d;
+
+      font-size: 1.5rem;
+    }
+
+    .equal:hover {
+      background: #33ceff;
+
+      box-shadow:
+        0 8px 25px rgba(0, 195, 255, 0.25);
+    }
+
+    /* BACKSPACE */
+
+    .backspace {
+      color: #facc15;
+
+      background: rgba(250, 204, 21, 0.08);
+    }
+
+    .backspace:hover {
+      background: rgba(250, 204, 21, 0.16);
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 400px) {
+      .calculator {
+        padding: 16px;
+      }
+
+      button {
+        height: 55px;
+        font-size: 1rem;
+      }
+
+      .display {
+        min-height: 100px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="calculator">
+
+    <div class="calculator-header">
+      <h1>🧮 Calculator</h1>
+      <span>BASIC</span>
+    </div>
+
+    <div
+      class="display"
+      id="display"
+    >
+      0
+    </div>
+
+    <div class="keypad">
+
+      <button class="clear">AC</button>
+
+      <button class="backspace">⌫</button>
+
+      <button class="operator">÷</button>
+
+      <button class="operator">×</button>
+
+
+      <button>7</button>
+      <button>8</button>
+      <button>9</button>
+
+      <button class="operator">−</button>
+
+
+      <button>4</button>
+      <button>5</button>
+      <button>6</button>
+
+      <button class="operator">+</button>
+
+
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+
+      <button class="equal">=</button>
+
+
+      <button>0</button>
+      <button>.</button>
+
+    </div>
+
+  </div>
+
+  <script>
+    const display =
+      document.getElementById("display");
+
+    const buttons =
+      document.querySelectorAll("button");
+
+    let currentInput = "0";
+    let justEvaluated = false;
+
+
+    buttons.forEach((button) => {
+
+      button.addEventListener("click", () => {
+
+        const buttonValue =
+          button.textContent.trim();
+
+        handleInput(buttonValue);
+
+      });
+
+    });
+
+
+    function handleInput(value) {
+
+      /* CLEAR */
+
+      if (value === "AC") {
+        currentInput = "0";
+        justEvaluated = false;
+
+        updateDisplay();
+        return;
+      }
+
+
+      /* BACKSPACE */
+
+      if (value === "⌫") {
+
+        if (
+          currentInput === "Error" ||
+          currentInput.length <= 1
+        ) {
+          currentInput = "0";
+        } else {
+          currentInput =
+            currentInput.slice(0, -1);
+        }
+
+        justEvaluated = false;
+
+        updateDisplay();
+        return;
+      }
+
+
+      /* EQUAL */
+
+      if (value === "=") {
+
+        calculateResult();
+
+        updateDisplay();
+        return;
+      }
+
+
+      /* CONVERT DISPLAY OPERATORS */
+
+      if (value === "×") {
+        value = "*";
+      }
+
+      if (value === "÷") {
+        value = "/";
+      }
+
+      if (value === "−") {
+        value = "-";
+      }
+
+
+      const isOperator =
+        ["+", "-", "*", "/"].includes(value);
+
+
+      /* OPERATOR */
+
+      if (isOperator) {
+
+        if (currentInput === "Error") {
+          currentInput = "0" + value;
+
+        } else if (justEvaluated) {
+          currentInput += value;
+
+        } else if (
+          /[+\-*/]$/.test(currentInput)
+        ) {
+          currentInput =
+            currentInput.slice(0, -1) + value;
+
+        } else {
+          currentInput += value;
+        }
+
+        justEvaluated = false;
+
+        updateDisplay();
+        return;
+      }
+
+
+      /* DECIMAL */
+
+      if (value === ".") {
+
+        const lastNumber =
+          currentInput
+            .split(/[+\-*/]/)
+            .pop();
+
+        if (
+          currentInput === "Error" ||
+          justEvaluated
+        ) {
+          currentInput = "0.";
+          justEvaluated = false;
+
+        } else if (
+          !lastNumber.includes(".")
+        ) {
+          currentInput += ".";
+        }
+
+        updateDisplay();
+        return;
+      }
+
+
+      /* NUMBERS */
+
+      if (
+        currentInput === "0" ||
+        currentInput === "Error" ||
+        justEvaluated
+      ) {
+        currentInput = value;
+
+      } else {
+        currentInput += value;
+      }
+
+      justEvaluated = false;
+
+      updateDisplay();
+    }
+
+
+    function calculateResult() {
+
+      try {
+
+        if (
+          /[+\-*/.]$/.test(currentInput)
+        ) {
+          throw new Error(
+            "Incomplete expression"
+          );
+        }
+
+        const result =
+          eval(currentInput);
+
+        if (!Number.isFinite(result)) {
+          throw new Error(
+            "Math error"
+          );
+        }
+
+        currentInput =
+          String(result);
+
+      } catch (error) {
+
+        currentInput = "Error";
+      }
+
+      justEvaluated = true;
+    }
+
+
+    function updateDisplay() {
+
+      let visibleValue =
+        currentInput
+          .replace(/\*/g, "×")
+          .replace(/\//g, "÷")
+          .replace(/-/g, "−");
+
+      display.textContent =
+        visibleValue;
+    }
+  </script>
+
+</body>
+</html>
